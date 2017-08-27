@@ -1,15 +1,21 @@
 import React from 'react';
 import { Alert, StyleSheet, Text, View, Image, Button} from 'react-native';
-
+import {buildLandmarkData, buildEdgeData, postJSON, parseDataToJSON} from './CallApi'
 export default class RegisterSuccess extends React.Component {
+	constructor() {
+		super()
+		this.goHome = this.goHome.bind(this)
+	}
 	goToLandmarkRegistration(){
 		Alert.alert("This functionality has yet to be implemented")
 	}
 	goHome() {
-		Alert.alert('Where is home?')
-		setTimeout(() => {
-			Alert.alert('Home is where the heart is')
-		}, 2000)
+		const { navigate } = this.props.navigation;
+		navigate('Visitor', { foo: 'bar' });
+		// Alert.alert('Where is home?')
+		// setTimeout(() => {
+		// 	Alert.alert('Home is where the heart is')
+		// }, 2000)
 	}
 	componentWillMount() {
 		this.saveToServer()
