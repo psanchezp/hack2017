@@ -1,8 +1,10 @@
 import React from 'react';
-import { Alert, StyleSheet, Text, View, Image, Button} from 'react-native';
+import { Alert, StyleSheet, Text, View, Image, Button, DeviceEventEmitter } from 'react-native';
 import {styles, stylesNoSwipe} from './StylesVar';
 import Swiper from 'react-native-swiper';
 import DoubleClick from 'react-native-double-click';
+import { NativeModules } from 'react-native';
+
 //receives Location Name as prop
 var beaconID;
 class CalibrateLocation extends React.Component {
@@ -42,6 +44,8 @@ class CalibrateLocation extends React.Component {
 	}
 }
 
+var tts = require('react-native-android-speech');
+
 export default class swipeLocationsScreen extends React.Component {
 	// Ttile  for locations page
 	static navigationOptions = { title: 'Landmarks', header: null, gesturesEnabled: false};
@@ -75,6 +79,31 @@ export default class swipeLocationsScreen extends React.Component {
 
 	}
 
+	componentDidMount() {
+	    NativeModules.CompassAndroid.startTracking();
+
+	    DeviceEventEmitter.addListener('azimuthChanged', this.azimuthChanged.bind(this));
+
+	    /**
+	     * We need this magic because we receive too much 'azimuthChanged' events so RN can't render it.
+	     * Using interval we'll update our view each 1/10 second with current azimuth value.
+	     */
+	    this.interval = setInterval(() => {
+	      this.setState({
+	        azimuth: this.currentAzimuth
+	      });
+	    }, 1000);
+	  }
+
+	  azimuthChanged(e: AzimuthEvent) {
+	    this.currentAzimuth = e.newAzimuth;
+	  }
+
+	  componentWillUnmount() {
+	    NativeModules.CompassAndroid.stopTracking();
+	    clearInterval(this.interval);
+	  }
+
 	handleChooseClick(indexChosen) {
 		if (indexChosen != 0){
 			for(var i = 0; i < edgeList.length; i++){
@@ -87,6 +116,13 @@ export default class swipeLocationsScreen extends React.Component {
 		else{
 			this.speakError(landmarkList[indexChosen].name);
 		}
+	}
+
+	_calcDir(end) {
+		coordNames = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"];
+	    coordIndex = Math.round(end / 45);
+
+	    return coordNames[coordIndex];
 	}
 
 	_getDirection(dirOne, dirTwo) {
@@ -243,11 +279,19 @@ export default class swipeLocationsScreen extends React.Component {
 	}
 
 	speak(sentence){
-		alert(sentence);
+		tts.speak({
+	      text: sentence
+	    }).then(isSpeaking=>{
+	        //Success Callback
+	        console.log(isSpeaking);
+	    }).catch(error=>{
+	        //Errror Callback
+	        console.log(error)
+	    });
 	}
 
 	speakDirection(edge, end){
-		var directions = "Please head " + edge.distance + " meters towards the " + this._getDirection("N", edge.direction) + " to reach " + end + ".";
+		var directions = "Please head " + edge.distance + " meters towards the " + this._getDirection(this._calcDir(this.state.azimuth), edge.direction) + " to reach " + end + ".";
 		this.speak(directions);
 	}
 
