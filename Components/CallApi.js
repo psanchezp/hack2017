@@ -45,7 +45,6 @@ export function parseDataToJSON(locationName, landmarkArray, edgesArray) {
 		"landmarks": landmarkArray,
 		"edges": edgesArray
 	};
-
 	return jsonData;
 }
 

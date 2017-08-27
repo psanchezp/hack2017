@@ -43,7 +43,7 @@ export default class RegisterTwo extends React.Component {
 			Math.sin(dLon/2) * Math.sin(dLon/2);
 		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 		var d = R * c;
-		return d * 1000;
+		return (d * 1000).toFixed(2);
 	}
 
 	_direction() {
@@ -55,7 +55,9 @@ export default class RegisterTwo extends React.Component {
 			compassDirection = 360 + compassDirection;
 		}
 
-		var coordNames = ["North", "North East", "East", "South East", "South", "South West", "West", "North West", "North"];
+		// var coordNames = ["North", "North East", "East", "South East", "South", "South West", "West", "North West", "North"];
+		var coordNames = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"];
+
 		var coordIndex = Math.round(compassDirection / 45);
 
 		return coordNames[coordIndex]; // returns the coordinate value
@@ -95,6 +97,11 @@ export default class RegisterTwo extends React.Component {
 	    );
 	}
 
+	componentWillMount() {
+		const { params } = this.props.navigation.state;
+		this.setState({ lat1: params.lat1, long1: params.long1 })
+	}
+
 	parseText(value) {
 		this.setState({ landmarkTwoName: value })
 	}
@@ -115,6 +122,7 @@ export default class RegisterTwo extends React.Component {
 			direction: this.state.direction
 		};
 		return [nodea, nodeb];
+
 	}
 	render() {
 		const { params } = this.props.navigation.state;
@@ -123,7 +131,7 @@ export default class RegisterTwo extends React.Component {
 		// this.setState({ lat1: params.lat1, long1: params.long1 });
 		return(
 			<View style={{flex: 1, backgroundColor: '#3CD0D0', alignItems: 'center', paddingTop: 100}}>
-				<Text style={{color: 'white', fontSize: 40, marginRight: 40, marginLeft: 40, fontWeight: '600', textAlign: 'center', marginBottom: 20}}>Landmark name {params.lat1}</Text>
+				<Text style={{color: 'white', fontSize: 40, marginRight: 40, marginLeft: 40, fontWeight: '600', textAlign: 'center', marginBottom: 20}}>Landmark name</Text>
 				<TextInput style={{height: 60, width: '80%', padding: 10, backgroundColor: 'white', marginBottom: 30}} onChangeText={e => this.parseText(e)} />
 				{(function(){return this.state.isFirstBtnVisible ?
 					<Button raised={true} onPress={this.startRecording} title="Start recording" color="#000"  style={{fontSize: 60}} accessibilityLabel="Press this when you wanna start mapping" /> : null}

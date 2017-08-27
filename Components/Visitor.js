@@ -56,12 +56,17 @@ export default class HomeScreen extends React.Component {
     var locationCalibratedData = parseDataToJSON("Azucar Morena", landmarksPostedArray, edgesPostedArray);
 
     // Emulates a beacon being recognized data, or a place being picked
-    beaconID = JSON.stringify(locationCalibratedData.uuid);
+    // beaconID = JSON.stringify(locationCalibratedData.uuid);
 
     // Post to API
-    postJSON(beaconID, locationCalibratedData);
+    // postJSON(beaconID, locationCalibratedData);
   }
-
+  componentWillMount() {
+    const {params} = this.props.navigation.state;
+    if(params && params !== null){
+      beaconID = params.beaconID;
+    }
+  }
   handleHostClick() {
     const { navigate } = this.props.navigation;
     navigate('Alpha', {beaconID: beaconID});
@@ -69,6 +74,7 @@ export default class HomeScreen extends React.Component {
 
   handleVisitClick() {
     const { navigate } = this.props.navigation;
+    console.log("Visitor.js BeaconID", beaconID);
     navigate('Locations', {beaconID: beaconID});
   }
 

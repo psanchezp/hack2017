@@ -1,6 +1,7 @@
 import React from 'react';
 import { Alert, StyleSheet, Text, View, Image, Button} from 'react-native';
 import {buildLandmarkData, buildEdgeData, postJSON, parseDataToJSON} from './CallApi'
+var beaconID;
 export default class RegisterSuccess extends React.Component {
 	constructor() {
 		super()
@@ -11,7 +12,8 @@ export default class RegisterSuccess extends React.Component {
 	}
 	goHome() {
 		const { navigate } = this.props.navigation;
-		navigate('Visitor', { foo: 'bar' });
+		console.log("RegisterSuccess.js beaconID", beaconID);
+		navigate('Visitor', { beaconID: beaconID });
 		// Alert.alert('Where is home?')
 		// setTimeout(() => {
 		// 	Alert.alert('Home is where the heart is')
@@ -28,8 +30,9 @@ export default class RegisterSuccess extends React.Component {
 		var distance = params.data[0].dist;
 		var direction = params.data[0].direction;
 		var edge = buildEdgeData(landmarks[0].id, landmarks[1].id, direction, distance);
-		var storeJSON = parseDataToJSON(params.data[1].name, landmarks, edge);
-		postJSON(JSON.stringify(storeJSON.uuid), storeJSON);
+		var storeJSON = parseDataToJSON(params.data[1].name, landmarks, [edge]);
+		postJSON(storeJSON.uuid, storeJSON);
+		beaconID = storeJSON.uuid;
 	}
 	render() {
 		return(

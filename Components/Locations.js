@@ -4,45 +4,46 @@ import {styles, stylesNoSwipe} from './StylesVar';
 import Swiper from 'react-native-swiper';
 import DoubleClick from 'react-native-double-click';
 import { NativeModules } from 'react-native';
-
+var edgeList = [];
+var landmarkList = [];
 //receives Location Name as prop
 var beaconID;
-class CalibrateLocation extends React.Component {
-	render() {
-		// Holder for props
-		var data = this.props;
+// class CalibrateLocation extends React.Component {
+// 	render() {
+// 		// Holder for props
+// 		var data = this.props;
 
-		// push to these arrays with method builders
-		// Do not post to API before populating these
-		var landmarksPostedArray = [];
-		var edgesPostedArray = [];
+// 		// push to these arrays with method builders
+// 		// Do not post to API before populating these
+// 		var landmarksPostedArray = [];
+// 		var edgesPostedArray = [];
 
-		// Create landmark data
-		var landmarkData = buildLandmarkData("Entrance","12","24");
-		// Populate landmark array
-		landmarksPostedArray.push(landmarkData);
+// 		// Create landmark data
+// 		var landmarkData = buildLandmarkData("Entrance","12","24");
+// 		// Populate landmark array
+// 		landmarksPostedArray.push(landmarkData);
 
-		// Create edge data
-		var edgeData = buildEdgeData("Entrance", "Counter","N","0.34","20","4");
-		// Populate edge array
-		edgesPostedArray.push(edgeData);
+// 		// Create edge data
+// 		var edgeData = buildEdgeData("Entrance", "Counter","N","0.34","20","4");
+// 		// Populate edge array
+// 		edgesPostedArray.push(edgeData);
 
-		// Use helper function to buils json
-		// This is after all calibration is done
-		var locationCalibratedData = parseDataToJSON("Azucar Morena", landmarksPostedArray, edgesPostedArray);
+// 		// Use helper function to buils json
+// 		// This is after all calibration is done
+// 		var locationCalibratedData = parseDataToJSON("Azucar Morena", landmarksPostedArray, edgesPostedArray);
 
-		// Emulates a beacon being recognized data, or a place being picked
-		beaconID = JSON.stringify(locationCalibratedData.uuid);
+// 		// Emulates a beacon being recognized data, or a place being picked
+// 		beaconID = JSON.stringify(locationCalibratedData.uuid);
 
-		// Post to API
-		postJSON(beaconID, locationCalibratedData);
+// 		// Post to API
+// 		postJSON(beaconID, locationCalibratedData);
 
-		// Post done
-		return (
-			<Text>Landmarks Calibrated {beaconID}</Text>
-		);
-	}
-}
+// 		// Post done
+// 		return (
+// 			<Text>Landmarks Calibrated {beaconID}</Text>
+// 		);
+// 	}
+// }
 
 var tts = require('react-native-android-speech');
 
@@ -60,10 +61,11 @@ export default class swipeLocationsScreen extends React.Component {
 	}
 	componentWillMount() {
 		const {params} = this.props.navigation.state;
+		console.log(params);
 		beaconID = params.beaconID;
 
 		var hostURL = "http://138.197.105.242:5000/";
-
+		console.log("BEACONID locations.js", beaconID);
 		fetch((hostURL + 'api/v1.0/maps/get/' + beaconID))
 			.then((response) => response.json())
 			.then(data => {
@@ -93,6 +95,7 @@ export default class swipeLocationsScreen extends React.Component {
 	        azimuth: this.currentAzimuth
 	      });
 	    }, 1000);
+	    console.log("EDGELIST: ", edgeList);
 	  }
 
 	  azimuthChanged(e: AzimuthEvent) {
