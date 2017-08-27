@@ -3,7 +3,7 @@ import { Alert, StyleSheet, Text, View, Image, TouchableWithoutFeedback } from '
 
 export default class Alpha extends React.Component {
 	static navigationOptions = {
-    title: 'Welcome!'
+    title: 'Welcome!', header: null
   };
 
 	render() {

@@ -15,7 +15,7 @@ export default class RegisterOne extends React.Component {
 	}
 
 	static navigationOptions = {
-    title: 'Registration'
+    title: 'Registration', header: null
   };
 
   _onFirstPress = () => {

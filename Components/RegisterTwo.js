@@ -6,7 +6,7 @@ import { NativeModules } from 'react-native';
 
 export default class RegisterTwo extends React.Component {
 	static navigationOptions = ({ navigation }) => ({
-		title: 'Registration'
+		title: 'Registration', header: null
 	});
 
 	constructor() {
